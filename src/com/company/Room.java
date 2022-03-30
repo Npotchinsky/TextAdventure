@@ -5,11 +5,12 @@ public class Room {
     private boolean monsterInfested;
     private Monster monster;
 
-    public Room(int roomLevel, boolean monsterInfested){
+
+    public Room(int roomLevel, boolean monsterInfested, Character player){
         this.roomLevel = roomLevel;
         this.monsterInfested = monsterInfested;
         if(monsterInfested){
-            monster =  new Goblin();
+            monster =  new Monster(player);
             System.out.println("As you travel down a snaking path you enter into a room,\n The room contains a "+ monster.getName() + " what would you like to do?");
         }
         else if (roomLevel > 0){

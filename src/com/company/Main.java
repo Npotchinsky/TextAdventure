@@ -18,16 +18,16 @@ public class Main {
         System.out.println("Alright, " + player.getName() + " time to begin your adventure. You enter The Dungeon you step into a room and see a tunnel to your left and to your right what would you like to do?");
         while (player.isAlive()) {
             String playerResponse = scanner.nextLine().toLowerCase(Locale.ROOT);
-                System.out.println("You walk through the" + playerResponse + " path feeling a light breeze coming from within.");
-                player.getRoom();
+                System.out.println("You walk through the " + playerResponse + " path feeling a light breeze coming from within.");
+                player.getRoom(player);
                 if (player.getLocation().isMonsterInfested()){
                 String goblinResponse = scanner.nextLine().toLowerCase(Locale.ROOT);
                 if (goblinResponse.contains("attack")){
-                    while(player.getLocation().getMonster().getHealth()>0){
+                    while(player.getLocation().getMonster().getHealth()>0 && player.isAlive()){
                         player.attack(player.getLocation().getMonster());
-                        if (player.getLocation().getMonster().getHealth()>0){
+                        if (player.getLocation().getMonster().getHealth()>0 && player.isAlive()){
                             System.out.println("would you like to attack again?");
-                            if (scanner.nextLine().toLowerCase(Locale.ROOT).contains("yes")){
+                            if (scanner.nextLine().toLowerCase(Locale.ROOT).contains("y")){
                                continue;
                             }
                             else{

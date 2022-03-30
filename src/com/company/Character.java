@@ -1,10 +1,9 @@
 package com.company;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 public class Character {
+    Scanner scanner = new Scanner(System.in);
     Random random = new Random();
     private String name;
     private int level = 1;
@@ -14,7 +13,7 @@ public class Character {
     private Weapon equippedWeapon;
     private List<Item> inventory = new ArrayList<>();
     private boolean alive = true;
-    private Room location = new Room(0, false);
+    private Room location = new Room(0, false, null);
     private int xpToLevel = 10;
 
     public Character(String name) {
@@ -75,36 +74,47 @@ public class Character {
         return name;
     }
 
-    public void attack(Monster monster){
-        monster.setHealth(monster.getHealth()-equippedWeapon.getDamageAmount());
-        System.out.println("You " + equippedWeapon.getDamageType() + " " + monster.getName() + " for "+ equippedWeapon.getDamageAmount() + " damage!");
-        if (monster.getHealth()<=0){
-            setXp(getXp()+ monster.getXpValue());
-            System.out.println("Congratulations! you slayed the " + monster.getName());
-            if (getXp()>=xpToLevel){
-                levelUp();
-                System.out.println("You leveled up! You are now level " + getLevel());
-            }
-            System.out.println("would you like to go left or right?");
-        }
-        else {
-            System.out.println(monster.getName() + " has " + monster.getHealth() + "/" + monster.getMaxHealth());
-            System.out.println(monster.getName() + " attacks you for " + monster.getDamage());
-            setHealth(getHealth()- monster.getDamage());
-            if(getHealth() <= 0){
-                System.out.println("You have died!");
-                alive = false;
-            }
-        }
-    }
+    public void attack(Monster monster) {
 
-    public void getRoom(){
+            monster.setHealth(monster.getHealth() - equippedWeapon.getDamageAmount());
+            System.out.println("You " + equippedWeapon.getDamageType() + " " + monster.getName() + " for " + equippedWeapon.getDamageAmount() + " damage!");
+            if (monster.getHealth() <= 0) {
+                setXp(getXp() + monster.getXpValue());
+                System.out.println("Congratulations! you slayed the " + monster.getName());
+                if (getXp() >= xpToLevel) {
+                    levelUp();
+                    System.out.println("You leveled up! You are now level " + getLevel());
+                }
+                if (random.nextInt(0, 6) == 5) {
+                    Weapon shinySword = new Weapon("Shiny Sword", true, getLevel() * random.nextInt(1, 3), "Slash");
+                    System.out.println("you found a new weapon: " + shinySword.getName());
+                    System.out.println(shinySword.getName() + " does " + shinySword.getDamageAmount() + " points of " + shinySword.getDamageType() + " damage.");
+                    System.out.println("would you like to equip " + shinySword.getName() + "?");
+                    getItem(shinySword);
+                    if (scanner.nextLine().toLowerCase(Locale.ROOT).contains("y")) {
+                        equipWeapon(shinySword);
+                    }
+                }
+                System.out.println("would you like to go left or right?");
+            } else if(alive && monster.getHealth()>0) {
+                System.out.println(monster.getName() + " has " + monster.getHealth() + "/" + monster.getMaxHealth());
+                System.out.println(monster.getName() + " attacks you for " + monster.getDamage());
+                setHealth(getHealth() - monster.getDamage());
+                if (getHealth() <= 0) {
+                    System.out.println("You have died!");
+                    alive = false;
+
+                }
+            }
+        }
+
+    public void getRoom(Character player){
         boolean hasMonster = true;
         if(random.nextInt(1,10)>3){
             hasMonster = true;
         }
         else hasMonster = false;
-        Room thisRoom = new Room(getLevel(),hasMonster);
+        Room thisRoom = new Room(getLevel(),hasMonster, player);
         setLocation(thisRoom);
     }
     public void drinkPotion(HealthPotion potion){
