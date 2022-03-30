@@ -2,8 +2,10 @@ package com.company;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class Character {
+    Random random = new Random();
     private String name;
     private int level = 1;
     private int health = 10;
@@ -12,12 +14,15 @@ public class Character {
     private Weapon equippedWeapon;
     private List<Item> inventory = new ArrayList<>();
     private boolean alive = true;
+    private Room location = new Room(0, false);
+    private int xpToLevel = 10;
 
     public Character(String name) {
         this.name = name;
         Weapon knife = new Weapon("Knife",true, 2,"Stab");
         inventory.add(knife);
         equipWeapon(knife);
+
     }
 
 
@@ -57,8 +62,13 @@ public class Character {
         return level;
     }
 
-    public void setLevel(int level) {
-        this.level = level;
+    public void levelUp() {
+        this.level = this.level+1;
+        this.maxHealth = this.maxHealth+2;
+        this.health = this.maxHealth;
+        this.xp = 0;
+        this.xpToLevel = this.xpToLevel +(this.level*10);
+
     }
 
     public String getName() {
@@ -71,10 +81,15 @@ public class Character {
         if (monster.getHealth()<=0){
             setXp(getXp()+ monster.getXpValue());
             System.out.println("Congratulations! you slayed the " + monster.getName());
+            if (getXp()>=xpToLevel){
+                levelUp();
+                System.out.println("You leveled up! You are now level " + getLevel());
+            }
+            System.out.println("would you like to go left or right?");
         }
         else {
-            System.out.println(monster.getName() + " has " + monster.getMaxHealth() + "/" + monster.getHealth());
-            System.out.println(monster.getName() + " attacks you for" + monster.getDamage());
+            System.out.println(monster.getName() + " has " + monster.getHealth() + "/" + monster.getMaxHealth());
+            System.out.println(monster.getName() + " attacks you for " + monster.getDamage());
             setHealth(getHealth()- monster.getDamage());
             if(getHealth() <= 0){
                 System.out.println("You have died!");
@@ -83,6 +98,15 @@ public class Character {
         }
     }
 
+    public void getRoom(){
+        boolean hasMonster = true;
+        if(random.nextInt(1,10)>3){
+            hasMonster = true;
+        }
+        else hasMonster = false;
+        Room thisRoom = new Room(getLevel(),hasMonster);
+        setLocation(thisRoom);
+    }
     public void drinkPotion(HealthPotion potion){
         setHealth(getHealth()+potion.getAmountToHeal());
         if (getHealth()>getMaxHealth()){
@@ -98,6 +122,14 @@ public class Character {
 
     public boolean isAlive() {
         return alive;
+    }
+
+    public void setLocation(Room location) {
+        this.location = location;
+    }
+
+    public Room getLocation() {
+        return location;
     }
 }
 
