@@ -6,12 +6,11 @@ public class Monster {
     static Random random = new Random();
     static MonsterNames monsterNames = new MonsterNames();
     private int maxHealth;
-    private int health = maxHealth;
-    private int xpValue;
-    private String name;
-    private int damage;
-    private boolean reasonable;
-    private static Character player;
+    private int health;
+    private final int xpValue;
+    private final String name;
+    private final int damage;
+    private final boolean reasonable;
 
     public Monster(int maxHealth, int xpValue, String name, int damage, boolean reasonable) {
         this.maxHealth = maxHealth;
@@ -41,7 +40,7 @@ public class Monster {
     public void attacks(Character player){
         System.out.println(getName() + " has " + getHealth() + "/" + getMaxHealth());
         System.out.println(getName() + " attacks you for " + getDamage());
-        player.setHealth(player.getHealth() - getDamage());
+        player.setHealth(player.getHealth() - random.nextInt(1,getDamage()+1));
         if (player.getHealth() <= 0) {
             System.out.println("You have died!");
             player.setAlive(false);

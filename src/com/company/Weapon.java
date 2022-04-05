@@ -1,8 +1,8 @@
 package com.company;
 
 public class Weapon extends Item{
-    private int damageAmount;
-    private String damageType;
+    private final int damageAmount;
+    private final String damageType;
 
     public int getDamageAmount() {
         return damageAmount;
@@ -16,7 +16,6 @@ public class Weapon extends Item{
         super(name, isReusable);
         this.damageAmount = damageAmount;
         this.damageType = damageType;
-        setSharp(true);
 
     }
 

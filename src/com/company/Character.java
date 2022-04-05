@@ -5,17 +5,17 @@ import java.util.*;
 public class Character {
     Scanner scanner = new Scanner(System.in);
     Random random = new Random();
-    private String name;
+    private final String name;
     private int level = 1;
     private int health = 10;
     private int maxHealth = 10;
     private int xp = 0;
     private Weapon equippedWeapon;
-    private List<Item> inventory = new ArrayList<>();
+    private final List<Item> inventory = new ArrayList<>();
     private boolean alive = true;
     private Room location = new Room(0, false, null);
     private int xpToLevel = 10;
-    private Drops drops = new Drops(this);
+    private final Drops drops = new Drops(this);
 
     public Character(String name) {
         this.name = name;
@@ -76,7 +76,7 @@ public class Character {
             this.health = this.maxHealth;
             this.xp = 0;
             this.xpToLevel = this.xpToLevel + (this.level * 10);
-            drops.levelDrops(this);
+            Drops.levelDrops(this);
             System.out.println("You leveled up! You are now level " + getLevel());
         }
     }
@@ -115,11 +115,15 @@ public class Character {
     }
 
     public void getRoom(Character player) {
-        boolean hasMonster = true;
-        if (random.nextInt(1, 10) > 3) {
-            hasMonster = true;
-        } else hasMonster = false;
-        Room thisRoom = new Room(getLevel(), hasMonster, player);
+        Room thisRoom = null;
+        if(random.nextInt(0,10) == 0 && level>=3){
+            thisRoom = new RoomList(player).getBossRoom();
+        }
+        else {
+        boolean hasMonster;
+        hasMonster = random.nextInt(1, 10) > 3;
+        thisRoom = new Room(hasMonster, player);
+        }
         setLocation(thisRoom);
     }
 
@@ -128,7 +132,7 @@ public class Character {
         if (getHealth() > getMaxHealth()) {
             setHealth(getMaxHealth());
         }
-
+        inventory.remove(potion);
     }
 
     public void getItem(Item item) {
@@ -151,7 +155,7 @@ public class Character {
     public boolean hasPotion() {
         boolean hasPotion = false;
         for (Item item : inventory) {
-            if (item instanceof HealthPotion == true){
+            if (item instanceof HealthPotion){
                 hasPotion = true;
             break;}
         }

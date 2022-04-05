@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MonsterNames {
-    private List<String> monsterNames = new ArrayList<String>();
+    private final List<String> monsterNames = new ArrayList<>();
 
     public MonsterNames(){
         monsterNames.add("Goblin");

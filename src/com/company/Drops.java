@@ -6,7 +6,7 @@ import java.util.Random;
 
 public class Drops {
     static Random random = new Random();
-    private static List<Item> drops = new ArrayList<Item>();
+    private static final List<Item> drops = new ArrayList<>();
 
     public Drops(Character player){
         drops.add(new HealthPotion("Small health potion", 3));

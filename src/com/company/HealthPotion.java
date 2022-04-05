@@ -1,7 +1,7 @@
 package com.company;
 
 public class HealthPotion extends Item {
-    private int amountToHeal;
+    private final int amountToHeal;
 
     public HealthPotion(String name, int amountToHeal) {
         this.setName(name);

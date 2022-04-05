@@ -5,9 +5,15 @@ public class Room {
     private boolean monsterInfested;
     private Monster monster;
 
-
-    public Room(int roomLevel, boolean monsterInfested, Character player){
+    public Room(int roomLevel, boolean monsterInfested, Monster monster){
         this.roomLevel = roomLevel;
+        this.monsterInfested = monsterInfested;
+        this.monster = monster;
+    }
+
+
+    public Room(boolean monsterInfested, Character player){
+        this.roomLevel = player.getLevel();
         this.monsterInfested = monsterInfested;
         if(monsterInfested){
             monster =  new Monster(player);
@@ -36,5 +42,9 @@ public class Room {
 
     public void setMonster(Monster monster) {
         this.monster = monster;
+    }
+
+    public int getRoomLevel() {
+        return roomLevel;
     }
 }
