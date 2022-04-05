@@ -1,8 +1,8 @@
 #Things to do for text adventure game
 
-build inventory system
-build character sheet
-build monsters
-build items
+improve inventory system
+improve character sheet
+add more monsters
+add more items
 build commands list
-introduce randomness
+increase randomness
