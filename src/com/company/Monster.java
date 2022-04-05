@@ -11,6 +11,7 @@ public class Monster {
     private String name;
     private int damage;
     private boolean reasonable;
+    private static Character player;
 
     public Monster(int maxHealth, int xpValue, String name, int damage, boolean reasonable) {
         this.maxHealth = maxHealth;
@@ -29,6 +30,23 @@ public class Monster {
         this.name = monsterNames.getMonsterNames().get(random.nextInt(0,monsterNames.getMonsterNames().size()-1));
         this.damage = character.getLevel();
         this.reasonable = false;
+    }
+
+    public void dies(Character player){
+        player.setXp(player.getXp() + getXpValue());
+        System.out.println("Congratulations! you slayed the " + getName());
+        player.levelUp();
+        player.dropItem();
+    }
+    public void attacks(Character player){
+        System.out.println(getName() + " has " + getHealth() + "/" + getMaxHealth());
+        System.out.println(getName() + " attacks you for " + getDamage());
+        player.setHealth(player.getHealth() - getDamage());
+        if (player.getHealth() <= 0) {
+            System.out.println("You have died!");
+            player.setAlive(false);
+
+        }
     }
 
     public int getMaxHealth() {

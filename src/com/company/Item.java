@@ -3,7 +3,15 @@ package com.company;
 public abstract class Item {
     private String name;
     private boolean isReusable;
+    private boolean isSharp = false;
 
+    public boolean isSharp() {
+        return isSharp;
+    }
+
+    public void setSharp(boolean sharp) {
+        isSharp = sharp;
+    }
     public String getName() {
         return name;
     }

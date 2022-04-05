@@ -11,10 +11,12 @@ public class Room {
         this.monsterInfested = monsterInfested;
         if(monsterInfested){
             monster =  new Monster(player);
-            System.out.println("As you travel down a snaking path you enter into a room,\n The room contains a "+ monster.getName() + " what would you like to do?");
+            System.out.println("As you travel down a snaking path you enter into a room,\nThe room contains a "+ monster.getName() + " what would you like to do?");
         }
         else if (roomLevel > 0){
-            System.out.println("The room is empty because Nathan hasn't coded anything else yet. would you like to go left or right?");
+            System.out.println("You come to an empty room");
+            player.dropItem();
+            System.out.println("you see a path to your left and to your right. which path would you like to follow.");
         }
 
     }

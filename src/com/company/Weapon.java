@@ -16,6 +16,8 @@ public class Weapon extends Item{
         super(name, isReusable);
         this.damageAmount = damageAmount;
         this.damageType = damageType;
+        setSharp(true);
+
     }
 
 

@@ -15,18 +15,26 @@ public class Character {
     private boolean alive = true;
     private Room location = new Room(0, false, null);
     private int xpToLevel = 10;
+    private Drops drops = new Drops(this);
 
     public Character(String name) {
         this.name = name;
-        Weapon knife = new Weapon("Knife",true, 2,"Stab");
+        Weapon knife = new Weapon("Knife", true, 2, "Stab");
         inventory.add(knife);
         equipWeapon(knife);
 
     }
 
+    public List<Item> getInventory() {
+        return inventory;
+    }
 
-    public void equipWeapon(Weapon weapon){
-    this.equippedWeapon = weapon;
+    public void setAlive(boolean alive) {
+        this.alive = alive;
+    }
+
+    public void equipWeapon(Weapon weapon) {
+        this.equippedWeapon = weapon;
     }
 
     public Weapon getEquippedWeapon() {
@@ -62,12 +70,32 @@ public class Character {
     }
 
     public void levelUp() {
-        this.level = this.level+1;
-        this.maxHealth = this.maxHealth+2;
-        this.health = this.maxHealth;
-        this.xp = 0;
-        this.xpToLevel = this.xpToLevel +(this.level*10);
+        if (getXp() >= xpToLevel) {
+            this.level = this.level + 1;
+            this.maxHealth = this.maxHealth + 2;
+            this.health = this.maxHealth;
+            this.xp = 0;
+            this.xpToLevel = this.xpToLevel + (this.level * 10);
+            drops.levelDrops(this);
+            System.out.println("You leveled up! You are now level " + getLevel());
+        }
+    }
 
+    public void dropItem() {
+        if (random.nextInt(0, 11) % 2 == 0) {
+            Item item = drops.getDrops().get(random.nextInt(drops.getDrops().size()));
+
+            inventory.add(item);
+            System.out.println("you found a new " + item.getClass().getSimpleName()+ ": " + item.getName());
+            if (item instanceof Weapon) {
+                System.out.println(item.getName() + " does " + ((Weapon) item).getDamageAmount() + " points of " + ((Weapon) item).getDamageType() + " damage.");
+                System.out.println("would you like to equip " + item.getName() + "?");
+                String equipResponse = scanner.nextLine();
+                if (equipResponse.toLowerCase(Locale.ROOT).contains("y")) {
+                    equipWeapon((Weapon) item);
+                }
+            }
+        }
     }
 
     public String getName() {
@@ -76,56 +104,34 @@ public class Character {
 
     public void attack(Monster monster) {
 
-            monster.setHealth(monster.getHealth() - equippedWeapon.getDamageAmount());
-            System.out.println("You " + equippedWeapon.getDamageType() + " " + monster.getName() + " for " + equippedWeapon.getDamageAmount() + " damage!");
-            if (monster.getHealth() <= 0) {
-                setXp(getXp() + monster.getXpValue());
-                System.out.println("Congratulations! you slayed the " + monster.getName());
-                if (getXp() >= xpToLevel) {
-                    levelUp();
-                    System.out.println("You leveled up! You are now level " + getLevel());
-                }
-                if (random.nextInt(0, 6) == 5) {
-                    Weapon shinySword = new Weapon("Shiny Sword", true, getLevel() * random.nextInt(1, 3), "Slash");
-                    System.out.println("you found a new weapon: " + shinySword.getName());
-                    System.out.println(shinySword.getName() + " does " + shinySword.getDamageAmount() + " points of " + shinySword.getDamageType() + " damage.");
-                    System.out.println("would you like to equip " + shinySword.getName() + "?");
-                    getItem(shinySword);
-                    if (scanner.nextLine().toLowerCase(Locale.ROOT).contains("y")) {
-                        equipWeapon(shinySword);
-                    }
-                }
-                System.out.println("would you like to go left or right?");
-            } else if(alive && monster.getHealth()>0) {
-                System.out.println(monster.getName() + " has " + monster.getHealth() + "/" + monster.getMaxHealth());
-                System.out.println(monster.getName() + " attacks you for " + monster.getDamage());
-                setHealth(getHealth() - monster.getDamage());
-                if (getHealth() <= 0) {
-                    System.out.println("You have died!");
-                    alive = false;
-
-                }
-            }
+        monster.setHealth(monster.getHealth() - equippedWeapon.getDamageAmount());
+        System.out.println("You " + equippedWeapon.getDamageType() + " " + monster.getName() + " for " + equippedWeapon.getDamageAmount() + " damage!");
+        if (monster.getHealth() <= 0) {
+            monster.dies(this);
+        } else if (alive && monster.getHealth() > 0) {
+            monster.attacks(this);
+            System.out.println("you have " + getHealth() + "/" + getMaxHealth() + "Health remaining");
         }
+    }
 
-    public void getRoom(Character player){
+    public void getRoom(Character player) {
         boolean hasMonster = true;
-        if(random.nextInt(1,10)>3){
+        if (random.nextInt(1, 10) > 3) {
             hasMonster = true;
-        }
-        else hasMonster = false;
-        Room thisRoom = new Room(getLevel(),hasMonster, player);
+        } else hasMonster = false;
+        Room thisRoom = new Room(getLevel(), hasMonster, player);
         setLocation(thisRoom);
     }
-    public void drinkPotion(HealthPotion potion){
-        setHealth(getHealth()+potion.getAmountToHeal());
-        if (getHealth()>getMaxHealth()){
+
+    public void drinkPotion(HealthPotion potion) {
+        setHealth(getHealth() + potion.getAmountToHeal());
+        if (getHealth() > getMaxHealth()) {
             setHealth(getMaxHealth());
         }
 
     }
 
-    public void getItem(Item item){
+    public void getItem(Item item) {
         inventory.add(item);
     }
 
@@ -141,5 +147,32 @@ public class Character {
     public Room getLocation() {
         return location;
     }
-}
+
+    public boolean hasPotion() {
+        boolean hasPotion = false;
+        for (Item item : inventory) {
+            if (item instanceof HealthPotion == true){
+                hasPotion = true;
+            break;}
+        }
+        return hasPotion;
+    }
+
+
+    public HealthPotion choosePotion() {
+        List<HealthPotion> potions = new ArrayList<>();
+        for (Item item : inventory) {
+            if (item instanceof HealthPotion) {
+                potions.add((HealthPotion) item);
+            }
+        }
+            System.out.println("you have ");
+            for (int i = 0; i < potions.size(); i++) {
+                System.out.println("(" + (i + 1) + "): " + potions.get(i).getName());
+            }
+            System.out.println("Which potion would you like to use?");
+            return potions.get(scanner.nextInt()-1);
+        }
+    }
+
 
